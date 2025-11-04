@@ -1,6 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+
+// represent the direction of the player battleship
+public enum Direction
+{
+    Front,Backward, Left, Right
+}
 
 public class EnemyManager : MonoBehaviour
 {
@@ -32,11 +39,22 @@ public class EnemyManager : MonoBehaviour
     [Header("Enemy Prefab")]
     [SerializeField] private GameObject enemyDefault;
 
+    private Direction currentFacing = Direction.Front;
+
+    private GameObject shownEnemyHolder;
+
     // Start is called before the first frame update
     void Start()
     {
         // initialize enemies list
         InitializeEnemiesList();
+        RenderViewAt(currentFacing);
+
+        shownEnemyHolder = GameObject.Find("Shown Enemies");
+        if (shownEnemyHolder == null)
+        {
+            shownEnemyHolder = new GameObject("Shown Enemies");
+        }
     }
 
     private void InitializeEnemiesList()
@@ -62,6 +80,50 @@ public class EnemyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        // if user pressed down key, switch to backview
+        if (Input.GetKey(KeyCode.DownArrow))
+        {
+            // hide current enemy
+        }
+    }
+
+    // render the view at given direction
+    private void RenderViewAt(Direction direction)
+    {
+        int directionToInt = -1;
+        switch (direction)
+        {
+            case Direction.Front:
+                directionToInt = 0;
+                break;
+            case Direction.Backward: directionToInt = 1; break;
+            case Direction.Left: directionToInt = 2; break;
+            case Direction.Right: directionToInt = 3; break;
+            default:
+                break;
+
+        }
+
+        if (directionToInt == -1)
+        {
+            Debug.LogWarning("Direction unspecified");
+        }
+
+        foreach (Enemy enemy in enemies[directionToInt])
+        {
+            Vector3 pos = enemy.GetEnemyPosition();
+            Instantiate(enemyDefault, pos, Quaternion.identity);
+
+            GameObject newEnemy = Instantiate(enemyDefault, pos, Quaternion.identity);
+
+            // add the enemy to the shown enemy holder
+            newEnemy.transform.SetParent(shownEnemyHolder.transform);
+        }
+    }
+
+    // convert the enemy gameobjects back to data type
+    private void HideCurrentActiveEnemies()
+    {
+       
     }
 }

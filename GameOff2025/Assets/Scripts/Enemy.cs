@@ -15,4 +15,9 @@ public class Enemy
         this.y = y;
         this.z = z;
     }
+
+    public Vector3 GetEnemyPosition()
+    {
+        return new Vector3(x, y, z);
+    }
 }
